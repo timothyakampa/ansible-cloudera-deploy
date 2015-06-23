@@ -1,0 +1,6 @@
+---
+  - name: Provision cloudera manager
+    hosts: nodes
+    remote_user: root
+    roles:
+      - provision-base-packages
