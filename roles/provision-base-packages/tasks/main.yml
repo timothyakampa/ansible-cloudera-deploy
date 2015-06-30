@@ -1,18 +1,23 @@
 ---
-  - name: Install oracle JDK
-    apt: pkg=python-software-properties state=latest
+  - name: Add oracle java apt repository
     apt_repository: repo='ppa:webupd8team/java' state=present
+
+  - name: Automatically select the Oracle License
+    debconf: name='oracle-java7-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+
+  - name: Install JRE
+    apt: pkg=oracle-java7-installer state=latest update-cache=yes force=yes
 
   - name: Update Repositories cache
     apt: update-cache=yes cache_valid_time=3600
 
-  - name: Install packages
+  - name: Install dependant packages
     apt: pkg={{item}} state=latest
     with_items:
+      - python-software-properties
       - python-dev
       - python-pip
       - curl
-      - oracle-java7-installer
 
-  # - name: Export JAVA_HOME
-  #   lineinfile: dest="/etc/environment" line="JAVA_HOME="  create=true
+  - name: Export JAVA_HOME
+    lineinfile: dest="/etc/environment" line="JAVA_HOME=/usr/lib/jvm/java-7-oracle"  create=true

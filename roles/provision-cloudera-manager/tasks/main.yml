@@ -1,0 +1,22 @@
+---
+  - name: Add cloudera apt repository
+    apt_repository: repo="{{item}}" state=present
+    with_items:
+      - deb [arch=amd64] http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm5 contrib
+      - deb-src http://archive.cloudera.com/cm5/ubuntu/trusty/amd64/cm trusty-cm5 contrib
+
+  - name: Update Repositories cache
+    apt: update-cache=yes cache_valid_time=3600
+
+  - name: Install cloudera manager server packages
+    apt: pkg={{item}} state=present force=yes
+    with_items:
+      - cloudera-manager-daemons
+      - cloudera-manager-server
+      - cloudera-manager-server-db-2
+
+  - name: Start cloudera server and database
+    service: name={{item}} state=started
+    with_items:
+      - cloudera-scm-server
+      - cloudera-scm-server-db
